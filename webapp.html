@@ -1,0 +1,224 @@
+<!-- this is where the AI generated app code will go -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>U.S. States Trivia Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      text-align: center;
+      padding: 50px;
+    }
+
+    .question-box {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .choices button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #007BFF;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .choices button:hover {
+      background-color: #0056b3;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .play-again {
+      margin-top: 30px;
+    }
+
+    .play-again button {
+      margin: 0 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .yes {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .no {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .yes:hover {
+      background-color: #218838;
+    }
+
+    .no:hover {
+      background-color: #c82333;
+    }
+
+    .final-score {
+      font-size: 20px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="question-box">
+    <h1>U.S. States Trivia</h1>
+    <div id="question">Loading...</div>
+    <div class="choices" id="choices"></div>
+    <div class="result" id="result"></div>
+    <div class="play-again hidden" id="play-again">
+      <p>Would you like to play again?</p>
+      <button class="yes" onclick="startGame()">Yes</button>
+      <button class="no" onclick="endGame()">No</button>
+    </div>
+    <div id="final-score" class="final-score"></div>
+  </div>
+
+  <script>
+   const questionBank = [
+      { question: "Which state is known as the 'Sunshine State'?", choices: ["California", "Florida", "Texas", "Arizona"], answer: "Florida" },
+      { question: "Which state has the Grand Canyon?", choices: ["Nevada", "Utah", "Arizona", "Colorado"], answer: "Arizona" },
+      { question: "Which state was the first to join the Union?", choices: ["Virginia", "Delaware", "Massachusetts", "New York"], answer: "Delaware" },
+      { question: "Which state is the largest by area?", choices: ["Texas", "California", "Alaska", "Montana"], answer: "Alaska" },
+      { question: "Which state is home to Mount Rushmore?", choices: ["North Dakota", "South Dakota", "Wyoming", "Montana"], answer: "South Dakota" },
+      { question: "Which state is famous for its potatoes?", choices: ["Iowa", "Idaho", "Ohio", "Indiana"], answer: "Idaho" },
+      { question: "Which state is known as the 'Empire State'?", choices: ["New York", "New Jersey", "Connecticut", "Massachusetts"], answer: "New York" },
+      { question: "Which state is the smallest by area?", choices: ["Rhode Island", "Delaware", "Connecticut", "Hawaii"], answer: "Rhode Island" },
+      { question: "Which state is known for bourbon and horse racing?", choices: ["Kentucky", "Tennessee", "Texas", "Alabama"], answer: "Kentucky" },
+      { question: "Which state contains the city of Chicago?", choices: ["Michigan", "Illinois", "Indiana", "Wisconsin"], answer: "Illinois" },
+      { question: "Which state has the most islands?", choices: ["Alaska", "Hawaii", "Florida", "California"], answer: "Alaska" },
+      { question: "Which state has the nickname 'The Garden State'?", choices: ["New York", "New Jersey", "Pennsylvania", "Connecticut"], answer: "New Jersey" },
+      { question: "Which state is famous for jazz music and Mardi Gras?", choices: ["Mississippi", "Georgia", "Louisiana", "Alabama"], answer: "Louisiana" },
+      { question: "Which state borders both the Atlantic Ocean and Canada?", choices: ["New Hampshire", "Vermont", "Maine", "Massachusetts"], answer: "Maine" },
+      { question: "Which state is known as the 'Land of 10,000 Lakes'?", choices: ["Wisconsin", "Michigan", "Minnesota", "North Dakota"], answer: "Minnesota" },
+      { question: "Which state has a panhandle?", choices: ["Oklahoma", "Nevada", "Arkansas", "Kansas"], answer: "Oklahoma" },
+      { question: "Which state is home to the Rocky Mountains?", choices: ["Wyoming", "Colorado", "Montana", "Nevada"], answer: "Colorado" },
+      { question: "Which state is nicknamed the 'Beehive State'?", choices: ["Nevada", "Utah", "Arizona", "New Mexico"], answer: "Utah" },
+      { question: "Which state is the last alphabetically?", choices: ["Washington", "Wisconsin", "Wyoming", "West Virginia"], answer: "Wyoming" },
+      { question: "Which state is known for the Indianapolis 500?", choices: ["Ohio", "Indiana", "Illinois", "Iowa"], answer: "Indiana" },
+      { question: "Which state is known as the 'Golden State'?", choices: ["California", "Colorado", "Texas", "Florida"], answer: "California" },
+      { question: "Which state has the most national parks?", choices: ["Utah", "California", "Alaska", "Wyoming"], answer: "California" },
+      { question: "Which state has the nickname 'The Palmetto State'?", choices: ["South Carolina", "North Carolina", "Georgia", "Florida"], answer: "South Carolina" },
+      { question: "Which state is known as 'The Last Frontier'?", choices: ["Hawaii", "Alaska", "California", "Montana"], answer: "Alaska" },
+      { question: "Which state has the famous Yellowstone National Park?", choices: ["Wyoming", "Montana", "Idaho", "Colorado"], answer: "Wyoming" },
+      { question: "Which state has the most populous city, New York City?", choices: ["New Jersey", "New York", "California", "Illinois"], answer: "New York" },
+      { question: "Which state is known for its unique style of pizza, 'Deep Dish'?", choices: ["New York", "California", "Illinois", "Michigan"], answer: "Illinois" },
+      { question: "Which state is the home of the Space Needle?", choices: ["California", "Florida", "Washington", "Texas"], answer: "Washington" },
+      { question: "Which state is famous for its maple syrup?", choices: ["Vermont", "New Hampshire", "Maine", "Massachusetts"], answer: "Vermont" },
+      { question: "Which state is the only one to have an official state pie?", choices: ["Minnesota", "Kentucky", "Kansas", "Georgia"], answer: "Minnesota" },
+      { question: "Which state has the most rivers?", choices: ["Missouri", "Alaska", "California", "Texas"], answer: "Missouri" },
+      { question: "Which state is known for the Battle of Gettysburg?", choices: ["Virginia", "Pennsylvania", "Ohio", "Kentucky"], answer: "Pennsylvania" }
+];
+
+
+    let selectedQuestions = [];
+    let currentQuestionIndex = 0;
+    let correctAnswers = 0;
+
+    function getRandomQuestions(count) {
+      const shuffled = questionBank.sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, count);
+    }
+
+    function startGame() {
+      selectedQuestions = getRandomQuestions(3);
+      currentQuestionIndex = 0;
+      correctAnswers = 0;
+      document.getElementById("play-again").classList.add("hidden");
+      document.getElementById("result").textContent = "";
+      document.getElementById("final-score").textContent = "";
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = selectedQuestions[currentQuestionIndex];
+      document.getElementById("question").textContent = q.question;
+      const choicesContainer = document.getElementById("choices");
+      choicesContainer.innerHTML = "";
+
+      q.choices.forEach(state => {
+        const button = document.createElement("button");
+        button.textContent = state;
+        button.onclick = () => handleAnswer(state);
+        choicesContainer.appendChild(button);
+      });
+    }
+
+    function handleAnswer(selected) {
+      const q = selectedQuestions[currentQuestionIndex];
+      const result = document.getElementById("result");
+
+      if (selected === q.answer) {
+        correctAnswers++;
+        result.textContent = "✅ Correct!";
+        result.style.color = "green";
+      } else {
+        result.textContent = `❌ Wrong! The correct answer was ${q.answer}.`;
+        result.style.color = "red";
+      }
+
+      setTimeout(() => {
+        currentQuestionIndex++;
+        result.textContent = "";
+
+        if (currentQuestionIndex < selectedQuestions.length) {
+          showQuestion();
+        } else {
+          showPlayAgain();
+        }
+      }, 1500);
+    }
+
+    function showPlayAgain() {
+      document.getElementById("question").textContent = "Nice work!";
+      document.getElementById("choices").innerHTML = "";
+      document.getElementById("play-again").classList.remove("hidden");
+    }
+
+    function endGame() {
+      const scorePercent = Math.round((correctAnswers / selectedQuestions.length) * 100);
+      const finalMessage = scorePercent >= 70 ? "Good job!" : "Better luck next time!";
+      document.getElementById("question").textContent = "Thanks for playing!";
+      document.getElementById("choices").innerHTML = "";
+      document.getElementById("play-again").classList.add("hidden");
+      document.getElementById("final-score").textContent = `You got ${scorePercent}% correct. ${finalMessage}`;
+    }
+
+    window.onload = startGame;
+  </script>
+
+</body>
+</html>
